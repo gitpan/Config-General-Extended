@@ -1,0 +1,67 @@
+NAME
+    Config::General::Extended - Extended access to Config files
+
+SYNOPSIS
+     use Config::General::Extended;
+     $conf = new Config::General::Extended("rcfile");
+     # or
+     $conf = new Config::General::Extended(\%somehash);
+
+DESCRIPTION
+    This module is a subclass of Config::General. You can use it if you want
+    OO access to parts of your config file. The following methods are
+    directly inherited from Config::General: new() getall().
+
+    Please refer to the the Config::General manpage, if you want to learn
+    about the usage of the two methods mentioned above. The possible format
+    of config files supported by this module is also well described in the
+    Config::General manpage.
+
+
+INSTALLATION
+
+	to install, type:
+	  perl Makefile.PL
+	  make
+	  make test
+	  make install
+
+	to read the complete documentation, type:
+	perldoc Config::General::Extended
+
+	An example script is provided named "test.pl" with its
+	configuration "test.rc".
+
+
+COPYRIGHT
+       Copyright (c) 2000 Thomas Linden
+
+       This library is free software; you can redistribute it
+       and/or modify it under the same terms as Perl itself.
+
+
+BUGS
+       none known yet.
+
+
+AUTHOR
+       Thomas Linden <tom@daemon.de>
+
+
+COPYRIGHT
+       Copyright (c) 2000 Thomas Linden
+
+       This library is free software; you can redistribute it
+       and/or modify it under the same terms as Perl itself.
+
+
+BUGS
+       none known yet.
+
+
+AUTHOR
+       Thomas Linden <tom@consol.de>
+
+
+VERSION
+	1.0
