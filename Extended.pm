@@ -1,7 +1,7 @@
 #
 # Config::General::Extended.pm - special Class based on Config::General
 #
-# Copyright (c) 2000 Thomas Linden <tom@daemon.de>.
+# Copyright (c) 2000-2001 Thomas Linden <tom@daemon.de>.
 # All Rights Reserved. Std. disclaimer applies.
 # Artificial License, same as perl itself. Have fun.
 #
@@ -9,7 +9,7 @@
 # namespace
 package Config::General::Extended;
 
-# yes we need the hash support of new() in 1.18!
+# yes we need the hash support of new() in 1.18 or higher!
 use Config::General 1.18;
 
 use FileHandle;
@@ -22,16 +22,27 @@ use vars qw(@ISA);
 use strict;
 
 
-$Config::General::Extended::VERSION = "1.0";
+$Config::General::Extended::VERSION = "1.1";
 
 
 sub obj {
   #
   # returns a config object from a given key
-  # or from the current config hash if the $key does not exist.
+  # or from the current config hash if the $key does not exist
+  # or an empty object if the content of $key is empty.
   #
   my($this, $key) = @_;
-  return $this->new( (exists $this->{config}->{$key} ? $this->{config}->{$key} : $this->{config} ) );
+  if (exists $this->{config}->{$key}) {
+    if (!$this->{config}->{$key}) {
+      return $this->new( () ); # empty object!
+    }
+    else {
+      return $this->new( $this->{config}->{$key} );
+    }
+  }
+  else {
+    return $this->new( $this->{config} );
+  }
 }
 
 
@@ -207,7 +218,10 @@ sub AUTOLOAD {
   }
 }
 
-
+sub DESTROY {
+  my $this = shift;
+  $this = ();
+}
 
 # keep this one
 1;
@@ -241,7 +255,7 @@ by this module is also well described in L<Config::General>.
 
 =over
 
-=item new('filename') or new(\%somehash)
+=item new(filename) or new(\%somehash)
 
 This method returns a B<Config::General> object (a hash blessed into "Config::General::Extended"
 namespace. All further methods must be used from that returned object. see below.
@@ -298,6 +312,7 @@ Assume you have the following config:
  <other>
       blah     blubber
       blah     gobble
+      leer
  </other>
 
 and already read it in using B<Config::General::Extended::new()>, then you can get a
@@ -321,6 +336,22 @@ Or, here is another use:
 
 See the discussion on B<hash()> and B<value()> below.
 
+If the key from which you want to create a new object is empty, an empty
+object will be returned. If you run the following on the above config:
+
+ $obj = $conf->obj("other")->obj("leer");
+
+Then $obj will be empty, just like if you have had run this:
+
+ $obj = new Config::General::Extended( () );
+
+Read operations on this empty object will return nothing or even fail.
+But you can use an empty object for I<creating> a new config using write
+operations, i.e.:
+
+ $obj->someoption("value");
+
+See the discussion on B<AUTOLOAD METHODS> below.
 
 =item hash('key')
 
@@ -407,7 +438,7 @@ You can use this method in B<foreach> loops as seen in an example above(obj() ).
 =back
 
 
-=head1 AOTOLOAD METHODS
+=head1 AUTOLOAD METHODS
 
 Another usefull feature is implemented in this class using the B<AUTOLOAD> feature
 of perl. If you know the keynames of a block within your config, you can access to
@@ -443,7 +474,7 @@ values under the given key will be overwritten.
 
 =head1 COPYRIGHT
 
-Copyright (c) 2000 Thomas Linden
+Copyright (c) 2000-2001 Thomas Linden
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
@@ -461,7 +492,7 @@ Thomas Linden <tom@daemon.de>
 
 =head1 VERSION
 
-1.0
+1.1
 
 =cut
 

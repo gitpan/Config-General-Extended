@@ -2,5 +2,5 @@ Extended.pm
 MANIFEST
 Makefile.PL
 README
-test.pl
-test.rc
+t/run.t
+t/test.rc
